@@ -6,7 +6,7 @@ export default function App() {
     return (
         <PaperProvider>
             <SafeAreaView>
-                <Text>Hello World</Text>
+                <Text>Hello World!</Text>
             </SafeAreaView>
         </PaperProvider>
     );
