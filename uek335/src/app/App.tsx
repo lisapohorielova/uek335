@@ -1,7 +1,5 @@
 import * as React from "react";
-import { Text } from "react-native";
 import { PaperProvider } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from 'expo-font';
 import {
     CormorantGaramond_400Regular,
@@ -11,7 +9,7 @@ import {
     Jost_400Regular,
     Jost_600SemiBold,
 } from '@expo-google-fonts/jost';
-import {Fonts} from "@/constants/theme";
+import InfoPageTmpl from "@/components/templates/InfoPageTmpl";
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -25,9 +23,9 @@ export default function App() {
 
     return (
         <PaperProvider>
-            <SafeAreaView>
-                <Text style={{fontFamily: Fonts?.jost}}>Hello World!</Text>
-            </SafeAreaView>
+
+                <InfoPageTmpl />
+
         </PaperProvider>
     );
 }
