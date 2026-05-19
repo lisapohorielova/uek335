@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Colors, Fonts} from "@/constants/theme";
 import { Text } from "react-native-paper";
+import { ShadowButton } from "@/components/atoms/ShadowButton";
 
 export default function InfoPageTmpl() {
   return (
@@ -15,6 +16,9 @@ export default function InfoPageTmpl() {
         <Text style={styles.header}>BookCrux</Text>
         <Text style={styles.header}>Library</Text>
         <Text style={styles.textContent}>Read, enjoy and learn about all new books</Text>
+      <View style={{ marginTop: 150 }}>
+        <ShadowButton text="GET STARTED" onPress={() => {}} />
+      </View>
     </View>
   );
 }
