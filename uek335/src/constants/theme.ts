@@ -6,6 +6,15 @@
 import '@/global.css';
 
 import { Platform } from 'react-native';
+import { useFonts } from 'expo-font';
+import {
+  CormorantGaramond_400Regular,
+  CormorantGaramond_700Bold,
+} from '@expo-google-fonts/cormorant-garamond';
+import {
+  Jost_400Regular,
+  Jost_600SemiBold,
+} from '@expo-google-fonts/jost';
 
 export const Colors = {
   light: {
@@ -22,6 +31,15 @@ export const Colors = {
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
   },
+  main: {
+    white: '#ffffff',
+    background: '#F1DAC4',
+    light: '#A69CAC',
+    mid: '#474973',
+    main: '#161B33',
+    dark: '#0D0C1D',
+    black: '#000000',
+  },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
@@ -36,18 +54,30 @@ export const Fonts = Platform.select({
     rounded: 'ui-rounded',
     /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
+    cormorant: 'CormorantGaramond_400Regular',
+    cormorantBold: 'CormorantGaramond_700Bold',
+    jost: 'Jost_400Regular',
+    jostSemiBold: 'Jost_600SemiBold',
   },
   default: {
     sans: 'normal',
     serif: 'serif',
     rounded: 'normal',
     mono: 'monospace',
+    cormorant: 'CormorantGaramond_400Regular',
+    cormorantBold: 'CormorantGaramond_700Bold',
+    jost: 'Jost_400Regular',
+    jostSemiBold: 'Jost_600SemiBold',
   },
   web: {
     sans: 'var(--font-display)',
     serif: 'var(--font-serif)',
     rounded: 'var(--font-rounded)',
     mono: 'var(--font-mono)',
+    cormorant: 'CormorantGaramond_400Regular',
+    cormorantBold: 'CormorantGaramond_700Bold',
+    jost: 'Jost_400Regular',
+    jostSemiBold: 'Jost_600SemiBold',
   },
 });
 
