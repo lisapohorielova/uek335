@@ -26,7 +26,7 @@ export const ShadowButton = ({text, onPress}: {text: string, onPress: () => void
                 elevation: 5,
             }}
             labelStyle={{
-                color: Colors.main.white,
+                color: Colors.main.background,
                 fontFamily: Fonts.jost,
                 fontSize: 16,
             }}
