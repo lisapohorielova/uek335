@@ -9,7 +9,7 @@ import {
     Jost_400Regular,
     Jost_600SemiBold,
 } from '@expo-google-fonts/jost';
-import InfoPageTmpl from "@/components/templates/InfoPageTmpl";
+import InfoPage from "@/components/pages/InfoPage";
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -24,7 +24,7 @@ export default function App() {
     return (
         <PaperProvider>
 
-                <InfoPageTmpl />
+                <InfoPage />
 
         </PaperProvider>
     );
