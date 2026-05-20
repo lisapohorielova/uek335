@@ -1,13 +1,12 @@
 import {LinearGradient} from "expo-linear-gradient";
 import {Colors, Fonts} from "@/constants/theme";
 import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import {
     View,
     Text,
     TextInput,
-    TouchableOpacity,
     StyleSheet,
-    ScrollView,
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
@@ -30,6 +29,8 @@ interface FormErrors {
 }
 
 export default function RegisterPageTmpl() {
+
+    const router = useRouter();
 
     const [form, setForm] = useState<FormData>({
         firstName: '',
@@ -117,17 +118,16 @@ export default function RegisterPageTmpl() {
                         <Field label="MAIL" field="email" placeholder="john.smith@gmail.com" keyboardType="email-address" />
                         <Field label="PASSWOD" field="password" placeholder="••••••••"  />
                         <Field label="AGE" field="age" placeholder="25" keyboardType="numeric" />
-                    </View>
 
-                    {/* Submit */}
+                        <View style={{width: '50%', alignSelf: 'center'}}>
                         <OutlinedButton text={"SIGN UP"} onPress={() => {}}/>
+                        </View>
 
-
-                    <Text style={styles.loginHint}>
-                        Bereits ein Konto?{' '}
-                        <Text style={styles.loginLink}>Anmelden</Text>
-                    </Text>
-
+                        <Text style={styles.loginHint}>
+                            Have an account?{' '}
+                            <Text style={styles.loginLink} onPress={() => router.push('/')}>Sign In</Text>
+                        </Text>
+                    </View>
             </KeyboardAvoidingView>
 
         </View>
@@ -141,20 +141,20 @@ const styles = StyleSheet.create({
         padding: 20,
         display: 'flex',
         flexDirection: 'column',
-        gap: 50
+        gap: 10
     },
     textCormorant: {
         fontSize: 28,
         color: Colors.main.background,
         fontFamily: Fonts.cormorantBold,
         marginLeft: 30,
-        top: -35
+        top: -20
     },
     header:{
         height: 100,
         width: '100%',
         borderRadius: 22,
-        marginTop: 70,
+        marginTop: 30,
         flexDirection: 'column',
         shadowColor: Colors.main.main,
         shadowOffset: { width: 2, height: 5 },
@@ -166,10 +166,6 @@ const styles = StyleSheet.create({
     safe: {
         flex: 1,
         backgroundColor: '#0D0C1D',
-    },
-    scroll: {
-        paddingHorizontal: 24,
-        paddingBottom: 40,
     },
     title: {
         fontSize: 28,
@@ -183,12 +179,10 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
     form: {
-        gap: 1,
         width: '100%',
         backgroundColor: Colors.main.dark,
         padding: 24,
         borderRadius: 22,
-        marginTop: 20,
         shadowColor: Colors.main.main,
         shadowOffset: { width: 2, height: 5 },
         shadowOpacity: 0.35,
@@ -261,6 +255,7 @@ const styles = StyleSheet.create({
     loginLink: {
         color: '#F1DAC4',
         fontWeight: '600',
+        textDecorationLine: 'underline',
     },
 
 });
