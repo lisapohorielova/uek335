@@ -2,6 +2,8 @@ import {LinearGradient} from "expo-linear-gradient";
 import {Colors, Fonts} from "@/constants/theme";
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
+import {FormData} from "@/types/FormData";
+import { registerUser} from "@/services/UserService";
 import {
     View,
     Text,
@@ -12,20 +14,13 @@ import {
 } from 'react-native';
 import {OutlinedButton} from "@/components/atoms/OutlinedButton";
 
-interface FormData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    age: string;
-}
-
 interface FormErrors {
     firstName?: string;
     lastName?: string;
     email?: string;
     password?: string;
-    age?: string;
+    age?: string
+    message?: string;
 }
 
 export default function RegisterPageTmpl() {
@@ -48,8 +43,8 @@ export default function RegisterPageTmpl() {
         if (!form.lastName.trim()) newErrors.lastName = 'Last Name required';
         if (!form.email.includes('@')) newErrors.email = 'Invalid email';
         if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-        const age = parseInt(form.age);
-        if (!form.age || isNaN(age) || age < 1 || age > 120)
+        const age = Number.parseInt(form.age);
+        if (!form.age || Number.isNaN(age) || age < 1 || age > 120)
             newErrors.age = 'Valid age required';
 
         setErrors(newErrors);
@@ -58,7 +53,15 @@ export default function RegisterPageTmpl() {
 
     const handleSubmit = () => {
         if (validate()) {
-            console.log('Form submitted:', form);
+            registerUser(form)
+                .then(() => {
+                    console.log('User registered successfully');
+                    router.push('/');
+                })
+                .catch((error) => {
+                    setErrors({ message: error.message || 'Registration failed' });
+                    console.error('Error registering user:', error);
+                });
         }
     };
 
@@ -120,7 +123,7 @@ export default function RegisterPageTmpl() {
                         <Field label="AGE" field="age" placeholder="25" keyboardType="numeric" />
 
                         <View style={{width: '50%', alignSelf: 'center'}}>
-                        <OutlinedButton text={"SIGN UP"} onPress={() => {}}/>
+                        <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()}/>
                         </View>
 
                         <Text style={styles.loginHint}>
