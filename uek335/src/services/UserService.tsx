@@ -13,7 +13,7 @@ interface RegisterResponse {
     };
 }
 
-export const registerUser = async (form: FormData): Promise<RegisterResponse> => {
+export async function registerUser(form: FormData): Promise<RegisterResponse> {
     const response = await fetch(BasePath + RegisterEndpoint, {
         method: 'POST',
         headers: {
@@ -24,16 +24,17 @@ export const registerUser = async (form: FormData): Promise<RegisterResponse> =>
             lastname: form.lastName,
             email: form.email,
             password: form.password,
-            age: parseInt(form.age),
+            age: Number.parseInt(form.age),
         }),
     });
 
+    const data = await response.json();
+    console.log(data);
     if (!response.ok) {
-        const error = await response.json();
-        console.error('Fehler beim Registrieren:', error);
-        throw new Error(error.message || 'Registrierung fehlgeschlagen');
+        console.error('Fehler beim Registrieren:', data);
+        throw new Error(data?.message || 'Registrierung fehlgeschlagen');
 
     }
 
-    return response.json();
-};
+    return data;
+}
