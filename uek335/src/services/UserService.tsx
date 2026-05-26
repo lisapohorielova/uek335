@@ -1,5 +1,7 @@
-import { FormData } from '@/types/FormData';
-import {BasePath, RegisterEndpoint} from "@/services/Routes";
+import { RegisterFormData } from '@/types/RegisterFormData';
+import {RegisterEndpoint} from "@/services/Routes";
+import {api} from "@/services/AxiosClient";
+import {LoginEndpoint} from "@/services/Routes";
 
 
 interface RegisterResponse {
@@ -13,28 +15,23 @@ interface RegisterResponse {
     };
 }
 
-export async function registerUser(form: FormData): Promise<RegisterResponse> {
-    const response = await fetch(BasePath + RegisterEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            firstname: form.firstName,
-            lastname: form.lastName,
-            email: form.email,
-            password: form.password,
-            age: Number.parseInt(form.age),
-        }),
+export async function registerUser(form: RegisterFormData): Promise<RegisterResponse> {
+    const { data } = await api.post(RegisterEndpoint, {
+        firstname: form.firstName,
+        lastname: form.lastName,
+        email: form.email,
+        password: form.password,
+        age: Number.parseInt(form.age),
     });
 
-    const data = await response.json();
-    console.log(data);
-    if (!response.ok) {
-        console.error('Fehler beim Registrieren:', data);
-        throw new Error(data?.message || 'Registrierung fehlgeschlagen');
+    return data;
+}
 
-    }
+export async function loginUser(email: string, password: string): Promise<RegisterResponse> {
+    const { data } = await api.post(LoginEndpoint, {
+        email,
+        password,
+    });
 
     return data;
 }

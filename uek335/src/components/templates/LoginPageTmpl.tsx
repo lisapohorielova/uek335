@@ -2,8 +2,8 @@ import {LinearGradient} from "expo-linear-gradient";
 import {Colors, Fonts} from "@/constants/theme";
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import {RegisterFormData} from "@/types/RegisterFormData";
-import { registerUser} from "@/services/UserService";
+import {LoginFormData} from "@/types/LoginFormData";
+import { loginUser } from "@/services/UserService";
 import {
     View,
     Text,
@@ -12,56 +12,55 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-import {OutlinedButton} from "@/components/atoms/OutlinedButton";
 import {saveToken} from "@/services/SecureStore";
+import {ShadowButton} from "@/components/atoms/ShadowButton";
 
-interface RegisterFormErrors {
-    firstName?: string;
-    lastName?: string;
+interface LoginFormErrors {
     email?: string;
     password?: string;
-    age?: string
     message?: string;
 }
 
-export default function RegisterPageTmpl() {
+export default function LoginPageTmpl() {
 
     const router = useRouter();
 
-    const [form, setForm] = useState<RegisterFormData>({
-        firstName: '',
-        lastName: '',
+    const [form, setForm] = useState<LoginFormData>({
         email: '',
         password: '',
-        age: '',
     });
 
-    const [errors, setErrors] = useState<RegisterFormErrors>({});
+    const [errors, setErrors] = useState<LoginFormErrors>({});
 
     const validate = (): boolean => {
-        const newErrors: RegisterFormErrors = {};
-        if (!form.firstName.trim()) newErrors.firstName = 'Name required';
-        if (!form.lastName.trim()) newErrors.lastName = 'Last Name required';
+        const newErrors: LoginFormErrors = {};
         if (!form.email.includes('@')) newErrors.email = 'Invalid email';
-        if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-        const age = Number.parseInt(form.age);
-        if (!form.age || Number.isNaN(age) || age < 1 || age > 120)
-            newErrors.age = 'Valid age required';
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
+    const [serverError, setServerError] = useState<string | null>(null);
+
     const handleSubmit = async () => {
         if (!validate()) return;
+        setServerError(null);
 
         try {
-            const data = await registerUser(form);
+            const data = await loginUser(form.email, form.password);
             await saveToken(data.accessToken);
-            console.log('Token gespeichert');
-            router.push('/');
+            router.replace('/');
         } catch (error: any) {
-            console.error(error.message);
+            const status = error.response?.status;
+
+            if (status === 401 || status === 400) {
+                setServerError('Incorrect email or password. Please try again.');
+            } else if (status === 404) {
+                setServerError('No account found with this email.');
+            } else if (status >= 500) {
+                setServerError('Server error. Please try again later.');
+            } else {
+                setServerError('An error occurred. Please try again.');
+            }
         }
     };
 
@@ -72,7 +71,7 @@ export default function RegisterPageTmpl() {
                        keyboardType = 'default',
                    }: {
         label: string;
-        field: keyof RegisterFormData;
+        field: keyof LoginFormData;
         placeholder: string;
         keyboardType?: any;
     }) => (
@@ -105,8 +104,8 @@ export default function RegisterPageTmpl() {
                 style={styles.header}
             >
                 <View style={styles.header}>
-                    <Text style={styles.textCormorant}>Create</Text>
-                    <Text style={styles.textCormorant}>Your Account</Text>
+                    <Text style={styles.textCormorant}>Hello,</Text>
+                    <Text style={styles.textCormorant}>Sign In!</Text>
                 </View>
             </LinearGradient>
 
@@ -114,23 +113,27 @@ export default function RegisterPageTmpl() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center'}}
             >
-                    {/* Form */}
-                    <View style={styles.form}>
-                        <Field label="FIRST NAME" field="firstName" placeholder="John" />
-                        <Field label="LAST NAME" field="lastName" placeholder="Smith" />
-                        <Field label="MAIL" field="email" placeholder="john.smith@gmail.com" keyboardType="email-address" />
-                        <Field label="PASSWOD" field="password" placeholder="••••••••"  />
-                        <Field label="AGE" field="age" placeholder="25" keyboardType="numeric" />
+                {/* Form */}
 
-                        <View style={{width: '50%', alignSelf: 'center'}}>
-                        <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()}/>
+                <View style={styles.form}>
+                    <Field label="EMAIL" field="email" placeholder="john.smith@gmail.com" keyboardType="email-address" />
+                    <Field label="PASSWORD" field="password" placeholder="••••••••"  />
+
+                    {serverError && (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.errorBoxText}>{serverError}</Text>
                         </View>
+                    )}
 
-                        <Text style={styles.loginHint}>
-                            Have an account?{' '}
-                            <Text style={styles.loginLink} onPress={() => router.push('/')}>Sign In</Text>
-                        </Text>
+                    <View style={{width: '50%', alignSelf: 'center'}}>
+                        <ShadowButton text={"SIGN IN"} onPress={() => handleSubmit()}/>
                     </View>
+
+                    <Text style={styles.loginHint}>
+                        Don't have an account?{' '}
+                        <Text style={styles.loginLink} onPress={() => router.push('/')}>Sign Up</Text>
+                    </Text>
+                </View>
             </KeyboardAvoidingView>
 
         </View>
@@ -183,6 +186,7 @@ const styles = StyleSheet.create({
     },
     form: {
         width: '100%',
+        height: '70%',
         backgroundColor: Colors.main.dark,
         padding: 24,
         borderRadius: 22,
@@ -251,7 +255,7 @@ const styles = StyleSheet.create({
     },
     loginHint: {
         textAlign: 'center',
-        marginTop: 20,
+        marginTop: 150,
         color: '#A69CAC',
         fontSize: 13,
     },
@@ -260,5 +264,17 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textDecorationLine: 'underline',
     },
-
+    errorBox: {
+        backgroundColor: '#2a1a1a',
+        borderRadius: 10,
+        borderLeftWidth: 3,
+        borderLeftColor: '#e05a5a',
+        padding: 12,
+        marginBottom: 16,
+    },
+    errorBoxText: {
+        color: '#e05a5a',
+        fontSize: 13,
+        fontFamily: Fonts?.jost,
+    },
 });
