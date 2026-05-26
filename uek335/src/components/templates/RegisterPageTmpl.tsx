@@ -116,11 +116,11 @@ export default function RegisterPageTmpl() {
             >
                     {/* Form */}
                     <View style={styles.form}>
-                        <Field label="FIRST NAME" field="firstName" placeholder="John" />
-                        <Field label="LAST NAME" field="lastName" placeholder="Smith" />
-                        <Field label="MAIL" field="email" placeholder="john.smith@gmail.com" keyboardType="email-address" />
-                        <Field label="PASSWOD" field="password" placeholder="••••••••"  />
-                        <Field label="AGE" field="age" placeholder="25" keyboardType="numeric" />
+                        {Field({ label: "FIRST NAME", field: "firstName", placeholder: "John" })}
+                        {Field({ label: "LAST NAME", field: "lastName", placeholder: "Smith" })}
+                        {Field({ label: "MAIL", field: "email", placeholder: "john.smith@gmail.com", keyboardType: "email-address" })}
+                        {Field({ label: "PASSWOD", field: "password", placeholder: "••••••••" })}
+                        {Field({ label: "AGE", field: "age", placeholder: "25", keyboardType: "numeric" })}
 
                         <View style={{width: '50%', alignSelf: 'center'}}>
                         <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()}/>
@@ -128,7 +128,7 @@ export default function RegisterPageTmpl() {
 
                         <Text style={styles.loginHint}>
                             Have an account?{' '}
-                            <Text style={styles.loginLink} onPress={() => router.push('/')}>Sign In</Text>
+                            <Text style={styles.loginLink} onPress={() => router.push('/login')}>Sign In</Text>
                         </Text>
                     </View>
             </KeyboardAvoidingView>
