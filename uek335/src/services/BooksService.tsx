@@ -47,3 +47,20 @@ export async function createBook(input: CreateBookInput): Promise<Book> {
     const { data } = await api.post<Book>(BooksEndpoint, input);
     return data;
 }
+
+export interface UpdateBookInput {
+    title?: string;
+    author?: string;
+    description?: string;
+    num_pages?: number;
+    cover_url?: string;
+}
+
+export async function updateBook(id: number, input: UpdateBookInput): Promise<Book> {
+    const { data } = await api.put<Book>(`${BooksEndpoint}/${id}`, input);
+    return data;
+}
+
+export async function deleteBook(id: number): Promise<void> {
+    await api.delete(`${BooksEndpoint}/${id}`);
+}
