@@ -13,6 +13,7 @@ import {
     Platform,
 } from 'react-native';
 import {OutlinedButton} from "@/components/atoms/OutlinedButton";
+import {saveToken} from "@/services/SecureStore";
 
 interface FormErrors {
     firstName?: string;
@@ -51,17 +52,16 @@ export default function RegisterPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
-        if (validate()) {
-            registerUser(form)
-                .then(() => {
-                    console.log('User registered successfully');
-                    router.push('/');
-                })
-                .catch((error) => {
-                    setErrors({ message: error.message || 'Registration failed' });
-                    console.error('Error registering user:', error);
-                });
+    const handleSubmit = async () => {
+        if (!validate()) return;
+
+        try {
+            const data = await registerUser(form);
+            await saveToken(data.accessToken);
+            console.log('Token gespeichert');
+            router.push('/');
+        } catch (error: any) {
+            console.error(error.message);
         }
     };
 
