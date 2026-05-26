@@ -1,7 +1,9 @@
 import { RegisterFormData } from '@/types/RegisterFormData';
-import {RegisterEndpoint} from "@/services/Routes";
+import {RegisterEndpoint, LoginEndpoint} from "@/services/Routes";
 import {api} from "@/services/AxiosClient";
-import {LoginEndpoint} from "@/services/Routes";
+import {deleteToken} from "@/services/SecureStore";
+import {User} from "@/types/User";
+import {router} from "expo-router";
 
 
 interface RegisterResponse {
@@ -33,5 +35,21 @@ export async function loginUser(email: string, password: string): Promise<Regist
         password,
     });
 
+    return data;
+}
+
+export async function logoutUser(): Promise<void> {
+    await deleteToken();
+    router.replace('/');
+}
+
+export async function deleteAccount(userId: number): Promise<void> {
+    await api.delete(`/users/${userId}`);
+    await deleteToken();
+    router.replace('/');
+}
+
+export async function getUser(userId: number): Promise<User> {
+    const { data } = await api.get(`/users/${userId}`);
     return data;
 }

@@ -7,24 +7,22 @@ import {
 } from 'react-native';
 import { Colors, Fonts } from '@/constants/theme';
 import {ShadowButton} from "@/components/atoms/ShadowButton";
+import {deleteAccount, getUser, logoutUser} from "@/services/UserService";
+import {User} from "@/types/User";
+import { getStoredUser} from "@/services/SecureStore";
 
-interface UserProfile {
-    firstname: string;
-    lastname: string;
-    email: string;
-    age: number;
-}
 
 export default function ProfilePage() {
-    const [user, setUser] = useState<UserProfile | null>(null);
+    const [user, setUser] = useState<User | null >(null);
 
     useEffect(() => {
-        setUser({
-            firstname: 'Anna',
-            lastname: 'Müller',
-            email: 'anna@beispiel.ch',
-            age: 25,
-        });
+        const fetchUser = async () => {
+            const stored = await getStoredUser();
+            if (!stored) return;
+            const user = await getUser(stored.id);
+            setUser(user);
+        };
+        fetchUser().then(() => {});
     }, []);
 
     const Field = ({ label, value }: { label: string; value: string }) => (
@@ -59,8 +57,8 @@ export default function ProfilePage() {
             </View>
 
             <View style={styles.buttonContainer}>
-                <ShadowButton text={"LOGOUT"} onPress={() => console.log('Logout')}/>
-                <ShadowButton text={"DELETE"} onPress={() => console.log('Edit Profile')}/>
+                <ShadowButton text={"LOGOUT"} onPress={logoutUser}/>
+                <ShadowButton text={"DELETE"} onPress={() => user && deleteAccount(user.id)}/>
             </View>
 
         </View>
@@ -74,7 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.main.dark,
         height: '100%',
         width: '100%',
-        padding: 20,
+        padding: 10,
     },
     container: {
         alignItems: 'center',
