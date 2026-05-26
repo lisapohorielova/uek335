@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     },
     form: {
         width: '100%',
-        height: '70%',
+        height: '80%',
         backgroundColor: Colors.main.dark,
         padding: 24,
         borderRadius: 22,

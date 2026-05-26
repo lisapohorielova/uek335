@@ -37,6 +37,7 @@ export default function RegisterPageTmpl() {
     });
 
     const [errors, setErrors] = useState<RegisterFormErrors>({});
+    const [serverError, setServerError] = useState<string | null>(null);
 
     const validate = (): boolean => {
         const newErrors: RegisterFormErrors = {};
@@ -61,7 +62,17 @@ export default function RegisterPageTmpl() {
             console.log('Token gespeichert');
             router.push('/');
         } catch (error: any) {
-            console.error(error.message);
+            const status = error.response?.status;
+
+            if (status === 401 || status === 400) {
+                setServerError('Incorrect email or password. Please try again.');
+            } else if (status === 404) {
+                setServerError('No account found with this email.');
+            } else if (status >= 500) {
+                setServerError('Server error. Please try again later.');
+            } else {
+                setServerError('An error occurred. Please try again.');
+            }
         }
     };
 
@@ -121,6 +132,12 @@ export default function RegisterPageTmpl() {
                         {Field({ label: "MAIL", field: "email", placeholder: "john.smith@gmail.com", keyboardType: "email-address" })}
                         {Field({ label: "PASSWOD", field: "password", placeholder: "••••••••" })}
                         {Field({ label: "AGE", field: "age", placeholder: "25", keyboardType: "numeric" })}
+
+                        {serverError && (
+                            <View style={styles.errorBox}>
+                                <Text style={styles.errorBoxText}>{serverError}</Text>
+                            </View>
+                        )}
 
                         <View style={{width: '50%', alignSelf: 'center'}}>
                         <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()}/>
@@ -234,6 +251,19 @@ const styles = StyleSheet.create({
         color: '#e05a5a',
         marginTop: 4,
         marginLeft: 4,
+    },
+    errorBox: {
+        backgroundColor: '#2a1a1a',
+        borderRadius: 10,
+        borderLeftWidth: 3,
+        borderLeftColor: '#e05a5a',
+        padding: 12,
+        marginBottom: 16,
+    },
+    errorBoxText: {
+        color: '#e05a5a',
+        fontSize: 13,
+        fontFamily: Fonts?.jost,
     },
     btnGradient: {
         borderRadius: 14,
