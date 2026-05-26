@@ -104,7 +104,7 @@ export default function LoginPageTmpl() {
                 style={styles.header}
             >
                 <View style={styles.header}>
-                    <Text style={styles.textCormorant}>Hello,</Text>
+                    <Text style={styles.textCormorant}>Hello</Text>
                     <Text style={styles.textCormorant}>Sign In!</Text>
                 </View>
             </LinearGradient>
