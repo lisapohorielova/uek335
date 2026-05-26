@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {BasePath} from "@/services/Routes";
+import {router} from 'expo-router';
+import {BasePath, LoginEndpoint, RegisterEndpoint} from "@/services/Routes";
 import * as SecureStore from 'expo-secure-store';
 
 export const api = axios.create({
@@ -14,3 +15,22 @@ api.interceptors.request.use(async (config) => {
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
+
+// When a request comes back unauthorized, the token is missing or expired:
+// drop it and send the user back to the login screen. Login/signup requests
+// answer 401 for wrong credentials too, so those are handled by their own form.
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const status = error.response?.status;
+        const url: string = error.config?.url ?? '';
+        const isAuthRequest = url.includes(LoginEndpoint) || url.includes(RegisterEndpoint);
+
+        if ((status === 401 || status === 403) && !isAuthRequest) {
+            await SecureStore.deleteItemAsync('accessToken');
+            router.replace('/login');
+        }
+
+        return Promise.reject(error);
+    },
+);

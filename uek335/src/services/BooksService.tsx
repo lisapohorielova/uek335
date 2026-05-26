@@ -32,3 +32,18 @@ export async function getMaxPages(): Promise<number> {
     });
     return data[0]?.num_pages ?? 1000;
 }
+
+/** Fields collected by the "Create a Book" form. */
+export interface CreateBookInput {
+    title: string;
+    author: string;
+    description: string;
+    num_pages: number;
+    cover_url: string;
+}
+
+/** Creates a new book in the catalogue (POST /books); the backend assigns the id. */
+export async function createBook(input: CreateBookInput): Promise<Book> {
+    const { data } = await api.post<Book>(BooksEndpoint, input);
+    return data;
+}
