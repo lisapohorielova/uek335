@@ -116,8 +116,8 @@ export default function LoginPageTmpl() {
                 {/* Form */}
 
                 <View style={styles.form}>
-                    <Field label="EMAIL" field="email" placeholder="john.smith@gmail.com" keyboardType="email-address" />
-                    <Field label="PASSWORD" field="password" placeholder="••••••••"  />
+                    {Field({ label: "EMAIL", field: "email", placeholder: "john.smith@gmail.com", keyboardType: "email-address" })}
+                    {Field({ label: "PASSWORD", field: "password", placeholder: "••••••••" })}
 
                     {serverError && (
                         <View style={styles.errorBox}>
@@ -131,7 +131,7 @@ export default function LoginPageTmpl() {
 
                     <Text style={styles.loginHint}>
                         Don't have an account?{' '}
-                        <Text style={styles.loginLink} onPress={() => router.push('/')}>Sign Up</Text>
+                        <Text style={styles.loginLink} onPress={() => router.push('/register')}>Sign Up</Text>
                     </Text>
                 </View>
             </KeyboardAvoidingView>
