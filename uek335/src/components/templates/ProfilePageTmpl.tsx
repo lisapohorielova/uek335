@@ -4,6 +4,7 @@ import {
     Text,
     StyleSheet,
     Image,
+    ScrollView,
 } from 'react-native';
 import { Colors, Fonts } from '@/constants/theme';
 import {ShadowButton} from "@/components/atoms/ShadowButton";
@@ -35,9 +36,8 @@ export default function ProfilePage() {
     );
 
     return (
-        <View style={styles.safe}>
+        <View style={styles.safe} >
             <View style={styles.container}>
-
                 <View style={styles.avatarWrapper}>
                     <Image
                         source={require("../../assets/EmtyUserIcon.png")}
@@ -60,7 +60,6 @@ export default function ProfilePage() {
                 <ShadowButton text={"LOGOUT"} onPress={logoutUser}/>
                 <ShadowButton text={"DELETE"} onPress={() => user && deleteAccount(user.id)}/>
             </View>
-
         </View>
     );
 }
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
         padding: 20,
         flexDirection: 'column',
         gap: 30,
-        paddingBottom: 40,
+        paddingBottom: 10,
     },
     header: {
         height: 100,

@@ -1,7 +1,7 @@
 import { RegisterFormData } from '@/types/RegisterFormData';
 import {RegisterEndpoint, LoginEndpoint} from "@/services/Routes";
 import {api} from "@/services/AxiosClient";
-import {deleteToken} from "@/services/SecureStore";
+import {deleteToken, saveToken, saveUser} from "@/services/SecureStore";
 import {User} from "@/types/User";
 import {router} from "expo-router";
 
@@ -25,6 +25,8 @@ export async function registerUser(form: RegisterFormData): Promise<RegisterResp
         password: form.password,
         age: Number.parseInt(form.age),
     });
+    await saveToken(data.accessToken);
+    await saveUser(data.user);
 
     return data;
 }
@@ -34,6 +36,8 @@ export async function loginUser(email: string, password: string): Promise<Regist
         email,
         password,
     });
+    await saveToken(data.accessToken);
+    await saveUser(data.user);
 
     return data;
 }
