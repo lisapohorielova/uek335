@@ -9,7 +9,7 @@ import {
     Jost_400Regular,
     Jost_600SemiBold,
 } from '@expo-google-fonts/jost';
-import FirstViewPage from "@/components/pages/FirstViewPage";
+import RegisterPage from "@/components/pages/RegisterPage";
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -24,7 +24,7 @@ export default function App() {
     return (
         <PaperProvider>
 
-                <FirstViewPage />
+                <RegisterPage />
 
         </PaperProvider>
     );
