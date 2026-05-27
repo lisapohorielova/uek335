@@ -22,7 +22,7 @@ Folgende Software wird vorausgesetzt und muss bereits auf dem Gerät installiert
 Das Projekt wird über Git vom Repository heruntergeladen:
 
 ```bash
-git clone [Repository-URL]
+git clone git@github.com:lisapohorielova/uek335.git
 ```
 
 ### 2. In das Projektverzeichnis wechseln
