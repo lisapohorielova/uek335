@@ -16,6 +16,12 @@ import { ThemedView } from './themed-view';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 
+/**
+ * Web tab bar (a horizontal pill bar with a brand label and a docs link).
+ * Web counterpart of the native `app-tabs.tsx`. (Expo starter component.)
+ *
+ * @returns The web tab navigator.
+ */
 export default function AppTabs() {
   return (
     <Tabs>
@@ -31,6 +37,12 @@ export default function AppTabs() {
   );
 }
 
+/**
+ * A single web tab button that highlights when focused.
+ *
+ * @param props - Tab trigger slot props; `isFocused` is injected by the trigger.
+ * @returns A pressable themed tab button.
+ */
 export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
@@ -45,6 +57,12 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
   );
 }
 
+/**
+ * Container for the web tab bar: brand label, the tab buttons, and a docs link.
+ *
+ * @param props - Standard `TabList` props; `children` are the tab triggers.
+ * @returns The horizontal tab bar.
+ */
 export function CustomTabList(props: TabListProps) {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];

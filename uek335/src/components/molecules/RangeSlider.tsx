@@ -2,23 +2,41 @@ import React, { useRef, useState } from "react";
 import { View, Text, StyleSheet, PanResponder, LayoutChangeEvent } from "react-native";
 import { Colors, Fonts } from "@/constants/theme";
 
+/** Diameter of a slider thumb in px; also used to inset the track. */
 const THUMB = 26;
 
+/** Props for {@link RangeSlider}. */
 type Props = {
+    /** Lowest selectable value. */
     min: number;
+    /** Highest selectable value. */
     max: number;
+    /** Current value of the lower handle. */
     low: number;
+    /** Current value of the upper handle. */
     high: number;
     /** Fired continuously while dragging with the new [low, high] pair. */
     onChange: (low: number, high: number) => void;
+    /** Caption shown above the track (defaults to `"PAGES"`). */
     label?: string;
 };
 
+/**
+ * Clamps a value into the inclusive `[lo, hi]` range.
+ *
+ * @param v - The value to clamp.
+ * @param lo - Lower bound.
+ * @param hi - Upper bound.
+ * @returns `v` constrained to `[lo, hi]`.
+ */
 const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 
 /**
  * Two-handle range slider (see the PAGES design). Built on the core PanResponder
  * so it works on native and web without GestureHandlerRootView setup.
+ *
+ * @param props - Bounds (`min`/`max`), current `low`/`high`, `onChange` and an optional `label`.
+ * @returns The range slider control.
  */
 export function RangeSlider({ min, max, low, high, onChange, label = "PAGES" }: Props) {
     const [trackW, setTrackW] = useState(0);

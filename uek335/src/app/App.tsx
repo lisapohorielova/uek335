@@ -11,6 +11,12 @@ import {
 } from '@expo-google-fonts/jost';
 import ProfilePage from "@/components/pages/ProfilePage";
 
+/**
+ * Standalone app shell (used outside expo-router) that loads the fonts and
+ * renders the profile screen inside a Paper provider.
+ *
+ * @returns The profile screen, or `null` while the fonts are still loading.
+ */
 export default function App() {
     const [fontsLoaded] = useFonts({
         CormorantGaramond_400Regular,

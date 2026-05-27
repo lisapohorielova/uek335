@@ -3,6 +3,15 @@ import React from "react";
 import {Colors, Fonts} from "@/constants/theme";
 import {LinearGradient} from "expo-linear-gradient";
 
+/**
+ * Primary button with a gradient fill and drop shadow, used for the main
+ * call-to-action on each screen.
+ *
+ * @param props - Component props.
+ * @param props.text - The button label.
+ * @param props.onPress - Called when the button is pressed.
+ * @returns A styled gradient button.
+ */
 export const ShadowButton = ({text, onPress}: {text: string, onPress: () => void}) => {
     return (
         <LinearGradient

@@ -12,10 +12,19 @@ import {User} from "@/types/User";
 import { getStoredUser} from "@/services/SecureStore";
 
 
+/**
+ * Profile screen: loads and shows the logged-in user's details and offers
+ * logout and (confirmed) account deletion.
+ *
+ * @returns The profile screen.
+ */
 export default function ProfilePage() {
-    const [user, setUser] = useState<User | null >(null);
+    const [user, setUser] = useState<User | null>(null);
 
-    // Load the logged-in user: take the id from local storage, fetch fresh data from the server.
+    /**
+     * Loads the logged-in user on mount.
+     * Reads the id from SecureStore, then fetches fresh data from the backend.
+     */
     useEffect(() => {
         const fetchUser = async () => {
             const stored = await getStoredUser();
@@ -26,6 +35,10 @@ export default function ProfilePage() {
         fetchUser().then(() => {});
     }, []);
 
+    /**
+     * Shows a confirmation dialog before deleting the account.
+     * Deletion only proceeds if the user confirms.
+     */
     const handleDelete = () => {
         Alert.alert(
             'Delete Account',
@@ -41,6 +54,14 @@ export default function ProfilePage() {
         );
     };
 
+    /**
+     * One read-only labelled row showing a single profile value.
+     *
+     * @param props - Field content.
+     * @param props.label - Field caption.
+     * @param props.value - Value to display.
+     * @returns The labelled read-only row.
+     */
     const Field = ({ label, value }: { label: string; value: string }) => (
         <View style={styles.fieldContainer}>
             <Text style={styles.label}>{label}</Text>

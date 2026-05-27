@@ -3,6 +3,12 @@ import { Tabs, TabSlot, TabList, TabTrigger } from "expo-router/ui";
 
 import { MenuBar, TabButton } from "@/components/molecules/MenuBar";
 
+/**
+ * Layout for the main tab section. Wires the four screens (home, search,
+ * profile, add) to the custom {@link MenuBar} / {@link TabButton} bottom bar.
+ *
+ * @returns The tab navigator with the custom bottom bar.
+ */
 export default function TabsLayout() {
     return (
         <Tabs>

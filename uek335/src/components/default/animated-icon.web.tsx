@@ -5,6 +5,12 @@ import Animated, { Keyframe, Easing } from 'react-native-reanimated';
 import classes from './animated-icon.module.css';
 const DURATION = 300;
 
+/**
+ * Web build has no splash overlay, so this renders nothing. Web counterpart of
+ * the native `animated-icon.tsx`. (Expo starter component.)
+ *
+ * @returns `null`.
+ */
 export function AnimatedSplashOverlay() {
   return null;
 }
@@ -54,6 +60,12 @@ const glowKeyframe = new Keyframe({
   },
 });
 
+/**
+ * Web version of the animated Expo logo, using a CSS-module gradient background.
+ * (Expo starter component.)
+ *
+ * @returns The animated icon.
+ */
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>

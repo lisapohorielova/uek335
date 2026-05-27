@@ -15,12 +15,23 @@ import {
 import {saveToken} from "@/services/SecureStore";
 import {ShadowButton} from "@/components/atoms/ShadowButton";
 
+/** Validation/server error messages shown on the login form. */
 interface LoginFormErrors {
+    /** Error for the email field. */
     email?: string;
+    /** Error for the password field. */
     password?: string;
+    /** Generic message (currently unused, reserved for form-wide errors). */
     message?: string;
 }
 
+/**
+ * Login screen: collects email/password, validates them, calls
+ * {@link loginUser} and on success navigates into the app. Server/HTTP errors
+ * are mapped to a readable message.
+ *
+ * @returns The login form screen.
+ */
 export default function LoginPageTmpl() {
 
     const router = useRouter();
@@ -32,7 +43,11 @@ export default function LoginPageTmpl() {
 
     const [errors, setErrors] = useState<LoginFormErrors>({});
 
-    // Basic client-side check before hitting the server.
+    /**
+     * Basic client-side check before hitting the server.
+     *
+     * @returns `true` if the email looks valid.
+     */
     const validate = (): boolean => {
         const newErrors: LoginFormErrors = {};
         if (!form.email.includes('@')) newErrors.email = 'Invalid email';
@@ -40,9 +55,13 @@ export default function LoginPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
+    /** Error message returned from the backend, shown below the form. */
     const [serverError, setServerError] = useState<string | null>(null);
 
-    // Log in and go to the app; map the HTTP status to a readable error message.
+    /**
+     * Logs in and navigates to the app; maps the HTTP status to a readable
+     * error message on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);
@@ -53,7 +72,6 @@ export default function LoginPageTmpl() {
             router.replace('/');
         } catch (error: any) {
             const status = error.response?.status;
-
             if (status === 401 || status === 400) {
                 setServerError('Incorrect email or password. Please try again.');
             } else if (status === 404) {
@@ -65,8 +83,16 @@ export default function LoginPageTmpl() {
             }
         }
     };
-
-    // One labelled input; clears its own error message as soon as the user types.
+    /**
+     * One labelled input; clears its own error message as soon as the user types.
+     *
+     * @param props - Field configuration.
+     * @param props.label - Field caption.
+     * @param props.field - Which {@link LoginFormData} key this input edits.
+     * @param props.placeholder - Placeholder text.
+     * @param props.keyboardType - Optional keyboard type (e.g. `"email-address"`).
+     * @returns The labelled input element.
+     */
     const Field = ({
                        label,
                        field,

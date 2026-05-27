@@ -4,9 +4,17 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
+/** Start scale of the splash so the icon roughly fills the screen height. */
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
+/** Splash/icon animation duration in ms. */
 const DURATION = 600;
 
+/**
+ * Full-screen splash overlay that scales out and fades, then unmounts itself.
+ * Rendered once at the app root. (Expo starter component.)
+ *
+ * @returns The splash overlay, or `null` once the animation has finished.
+ */
 export function AnimatedSplashOverlay() {
   const [visible, setVisible] = useState(true);
 
@@ -80,6 +88,12 @@ const glowKeyframe = new Keyframe({
   },
 });
 
+/**
+ * Animated Expo logo (glow, scaling background and fading-in logo). (Expo
+ * starter component.)
+ *
+ * @returns The animated icon.
+ */
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>

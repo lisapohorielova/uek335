@@ -15,15 +15,29 @@ import {
 import {OutlinedButton} from "@/components/atoms/OutlinedButton";
 import {saveToken} from "@/services/SecureStore";
 
+/** Field-level validation errors for the registration form. */
 interface RegisterFormErrors {
+    /** Error for the first-name field. */
     firstName?: string;
+    /** Error for the last-name field. */
     lastName?: string;
+    /** Error for the email field. */
     email?: string;
+    /** Error for the password field. */
     password?: string;
+    /** Error for the age field. */
     age?: string
+    /** Generic message (currently unused, reserved for form-wide errors). */
     message?: string;
 }
 
+/**
+ * Registration screen: collects the account fields, validates them, calls
+ * {@link registerUser} and on success navigates into the app. Server/HTTP
+ * errors are mapped to a readable message.
+ *
+ * @returns The registration form screen.
+ */
 export default function RegisterPageTmpl() {
 
     const router = useRouter();
@@ -37,9 +51,15 @@ export default function RegisterPageTmpl() {
     });
 
     const [errors, setErrors] = useState<RegisterFormErrors>({});
+
+    /** Error message returned from the backend, shown below the form. */
     const [serverError, setServerError] = useState<string | null>(null);
 
-    // Client-side check of every field (name, email, password length, age range).
+    /**
+     * Client-side check of every field (name, email, password length, age range).
+     *
+     * @returns `true` if all fields are valid.
+     */
     const validate = (): boolean => {
         const newErrors: RegisterFormErrors = {};
         if (!form.firstName.trim()) newErrors.firstName = 'Name required';
@@ -54,7 +74,10 @@ export default function RegisterPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Register, store the token and enter the app; map the HTTP status to a readable error.
+    /**
+     * Registers the account, stores the token and enters the app; maps the HTTP
+     * status to a readable error on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
 
@@ -65,7 +88,6 @@ export default function RegisterPageTmpl() {
             router.push('/');
         } catch (error: any) {
             const status = error.response?.status;
-
             if (status === 401 || status === 400) {
                 setServerError('Incorrect email or password. Please try again.');
             } else if (status === 404) {
@@ -78,7 +100,15 @@ export default function RegisterPageTmpl() {
         }
     };
 
-    // One labelled input; clears its own error message as soon as the user types.
+    /**
+     * Single labelled text input.
+     * Clears its own error as soon as the user starts typing.
+     *
+     * @param label - Uppercase label shown above the input
+     * @param field - Key of the form field this input controls
+     * @param placeholder - Placeholder text
+     * @param keyboardType - Optional keyboard type (default: 'default')
+     */
     const Field = ({
                        label,
                        field,
@@ -126,36 +156,36 @@ export default function RegisterPageTmpl() {
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center'}}
+                style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}
             >
-                    {/* Form */}
-                    <View style={styles.form}>
-                        {Field({ label: "FIRST NAME", field: "firstName", placeholder: "John" })}
-                        {Field({ label: "LAST NAME", field: "lastName", placeholder: "Smith" })}
-                        {Field({ label: "MAIL", field: "email", placeholder: "john.smith@gmail.com", keyboardType: "email-address" })}
-                        {Field({ label: "PASSWOD", field: "password", placeholder: "••••••••" })}
-                        {Field({ label: "AGE", field: "age", placeholder: "25", keyboardType: "numeric" })}
+                <View style={styles.form}>
+                    {Field({ label: "FIRST NAME", field: "firstName", placeholder: "John" })}
+                    {Field({ label: "LAST NAME", field: "lastName", placeholder: "Smith" })}
+                    {Field({ label: "MAIL", field: "email", placeholder: "john.smith@gmail.com", keyboardType: "email-address" })}
+                    {Field({ label: "PASSWORD", field: "password", placeholder: "••••••••" })}
+                    {Field({ label: "AGE", field: "age", placeholder: "25", keyboardType: "numeric" })}
 
-                        {serverError && (
-                            <View style={styles.errorBox}>
-                                <Text style={styles.errorBoxText}>{serverError}</Text>
-                            </View>
-                        )}
-
-                        <View style={{width: '50%', alignSelf: 'center'}}>
-                        <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()}/>
+                    {/* Server-side error banner */}
+                    {serverError && (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.errorBoxText}>{serverError}</Text>
                         </View>
+                    )}
 
-                        <Text style={styles.loginHint}>
-                            Have an account?{' '}
-                            <Text style={styles.loginLink} onPress={() => router.push('/login')}>Sign In</Text>
-                        </Text>
+                    <View style={{ width: '50%', alignSelf: 'center' }}>
+                        <OutlinedButton text={"SIGN UP"} onPress={() => handleSubmit()} />
                     </View>
-            </KeyboardAvoidingView>
 
+                    <Text style={styles.loginHint}>
+                        Have an account?{' '}
+                        <Text style={styles.loginLink} onPress={() => router.push('/login')}>Sign In</Text>
+                    </Text>
+                </View>
+            </KeyboardAvoidingView>
         </View>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

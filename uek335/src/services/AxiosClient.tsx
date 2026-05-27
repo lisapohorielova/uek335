@@ -1,15 +1,30 @@
+/**
+ * Central Axios instance and the request/response interceptors that handle
+ * authentication for the whole app.
+ * @module
+ */
 import axios from 'axios';
 import {router} from 'expo-router';
 import {BasePath, LoginEndpoint, RegisterEndpoint} from "@/services/Routes";
 import * as SecureStore from 'expo-secure-store';
 
+/**
+ * Shared HTTP client pointed at {@link BasePath}. Import this instead of using
+ * `axios` directly so every request goes through the auth interceptors below.
+ */
 export const api = axios.create({
     baseURL: BasePath,
     headers: {
         'Content-Type': 'application/json',
     },
 });
-
+/**
+ * Axios request interceptor — automatically attaches the JWT access token
+ * to every outgoing request if one is present in SecureStore.
+ *
+ * @param config - The Axios request config
+ * @returns The modified config with the Authorization header set
+ */
 api.interceptors.request.use(async (config) => {
     const token = await SecureStore.getItemAsync('accessToken');
     if (token) config.headers.Authorization = `Bearer ${token}`;

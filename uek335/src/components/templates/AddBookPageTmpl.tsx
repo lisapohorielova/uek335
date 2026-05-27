@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors, Fonts } from "@/constants/theme";
 import { createBook } from "@/services/BooksService";
 
+/** Local form state; `pages` is a string because it comes from a text input. */
 interface NewBookForm {
     title: string;
     author: string;
@@ -25,8 +26,10 @@ interface NewBookForm {
     cover_url: string;
 }
 
+/** Per-field validation messages (only set for fields that have an error). */
 type FormErrors = Partial<Record<keyof NewBookForm, string>>;
 
+/** Blank form used as the initial state and after a successful submit. */
 const EMPTY_FORM: NewBookForm = {
     title: "",
     author: "",
@@ -35,16 +38,30 @@ const EMPTY_FORM: NewBookForm = {
     cover_url: "",
 };
 
+/**
+ * Full-screen "Create a Book" form (the ADD tab). Validates input, creates the
+ * book via {@link createBook} and navigates to the search screen on success.
+ *
+ * @returns The add-book form screen.
+ */
 export default function AddBookPageTmpl() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
 
     const [form, setForm] = useState<NewBookForm>(EMPTY_FORM);
     const [errors, setErrors] = useState<FormErrors>({});
+
+    /** Error message returned from the backend, shown below the form. */
     const [serverError, setServerError] = useState<string | null>(null);
+
+    /** True while the create request is in flight — disables the submit button. */
     const [submitting, setSubmitting] = useState(false);
 
-    // Title is required, pages (if given) must be a valid non-negative number.
+    /**
+     * Title is required, pages (if given) must be a valid non-negative number.
+     *
+     * @returns `true` if the form is valid.
+     */
     const validate = (): boolean => {
         const next: FormErrors = {};
         if (!form.title.trim()) next.title = "Title is required";
@@ -55,7 +72,10 @@ export default function AddBookPageTmpl() {
         return Object.keys(next).length === 0;
     };
 
-    // Create the book, then reset the form and jump to the search screen.
+    /**
+     * Submits the form — creates the book, resets the form and navigates to the search screen.
+     * Shows a server error banner on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);
@@ -77,6 +97,7 @@ export default function AddBookPageTmpl() {
         }
     };
 
+    /** Clears the form and returns to the home screen. */
     const handleCancel = () => {
         setForm(EMPTY_FORM);
         setErrors({});
@@ -84,7 +105,15 @@ export default function AddBookPageTmpl() {
         router.replace("/home");
     };
 
-    // Called as a plain function (not <Field />) so the inputs keep focus between keystrokes.
+    /**
+     * Builds one labelled input. Called as a plain function (not `<Field />`)
+     * so the inputs keep focus between keystrokes.
+     *
+     * @param label - Field caption.
+     * @param field - Which {@link NewBookForm} key this input edits.
+     * @param options - Optional `multiline` flag and `keyboardType`.
+     * @returns The labelled input element.
+     */
     const renderField = (
         label: string,
         field: keyof NewBookForm,
