@@ -12,10 +12,14 @@ import {User} from "@/types/User";
 import { getStoredUser} from "@/services/SecureStore";
 
 
+/** Profile screen — displays the current user's data with logout and delete options. */
 export default function ProfilePage() {
-    const [user, setUser] = useState<User | null >(null);
+    const [user, setUser] = useState<User | null>(null);
 
-    // Load the logged-in user: take the id from local storage, fetch fresh data from the server.
+    /**
+     * Loads the logged-in user on mount.
+     * Reads the id from SecureStore, then fetches fresh data from the backend.
+     */
     useEffect(() => {
         const fetchUser = async () => {
             const stored = await getStoredUser();
@@ -26,6 +30,10 @@ export default function ProfilePage() {
         fetchUser().then(() => {});
     }, []);
 
+    /**
+     * Shows a confirmation dialog before deleting the account.
+     * Deletion only proceeds if the user confirms.
+     */
     const handleDelete = () => {
         Alert.alert(
             'Delete Account',

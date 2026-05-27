@@ -9,7 +9,13 @@ export const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
-
+/**
+ * Axios request interceptor — automatically attaches the JWT access token
+ * to every outgoing request if one is present in SecureStore.
+ *
+ * @param config - The Axios request config
+ * @returns The modified config with the Authorization header set
+ */
 api.interceptors.request.use(async (config) => {
     const token = await SecureStore.getItemAsync('accessToken');
     if (token) config.headers.Authorization = `Bearer ${token}`;

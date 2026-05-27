@@ -35,16 +35,24 @@ const EMPTY_FORM: NewBookForm = {
     cover_url: "",
 };
 
+/** Screen for adding a new book to the catalogue. */
 export default function AddBookPageTmpl() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
 
     const [form, setForm] = useState<NewBookForm>(EMPTY_FORM);
     const [errors, setErrors] = useState<FormErrors>({});
+
+    /** Error message returned from the backend, shown below the form. */
     const [serverError, setServerError] = useState<string | null>(null);
+
+    /** True while the create request is in flight — disables the submit button. */
     const [submitting, setSubmitting] = useState(false);
 
-    // Title is required, pages (if given) must be a valid non-negative number.
+    /**
+     * Client-side validation — title is required, pages must be a valid non-negative number.
+     * @returns true if the form is valid, false otherwise
+     */
     const validate = (): boolean => {
         const next: FormErrors = {};
         if (!form.title.trim()) next.title = "Title is required";
@@ -55,7 +63,10 @@ export default function AddBookPageTmpl() {
         return Object.keys(next).length === 0;
     };
 
-    // Create the book, then reset the form and jump to the search screen.
+    /**
+     * Submits the form — creates the book, resets the form and navigates to the search screen.
+     * Shows a server error banner on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);
@@ -77,6 +88,7 @@ export default function AddBookPageTmpl() {
         }
     };
 
+    /** Resets the form and navigates back to the home screen without saving. */
     const handleCancel = () => {
         setForm(EMPTY_FORM);
         setErrors({});
@@ -84,7 +96,16 @@ export default function AddBookPageTmpl() {
         router.replace("/home");
     };
 
-    // Called as a plain function (not <Field />) so the inputs keep focus between keystrokes.
+    /**
+     * Renders a single labelled text input.
+     * Called as a plain function instead of a JSX component so inputs
+     * retain focus between keystrokes.
+     * Clears its own error as soon as the user starts typing.
+     *
+     * @param label - Uppercase label shown above the input
+     * @param field - Key of the form field this input controls
+     * @param options - Optional multiline flag and keyboard type
+     */
     const renderField = (
         label: string,
         field: keyof NewBookForm,

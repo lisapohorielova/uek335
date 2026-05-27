@@ -20,7 +20,7 @@ interface LoginFormErrors {
     password?: string;
     message?: string;
 }
-
+/** Login screen — authenticates the user and navigates into the app. */
 export default function LoginPageTmpl() {
 
     const router = useRouter();
@@ -32,7 +32,10 @@ export default function LoginPageTmpl() {
 
     const [errors, setErrors] = useState<LoginFormErrors>({});
 
-    // Basic client-side check before hitting the server.
+    /**
+     * Basic client-side validation before hitting the server.
+     * @returns true if the form is valid, false otherwise
+     */
     const validate = (): boolean => {
         const newErrors: LoginFormErrors = {};
         if (!form.email.includes('@')) newErrors.email = 'Invalid email';
@@ -40,9 +43,14 @@ export default function LoginPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
+    /** Error message returned from the backend, shown below the form. */
     const [serverError, setServerError] = useState<string | null>(null);
 
-    // Log in and go to the app; map the HTTP status to a readable error message.
+    /**
+     * Submits the login form — authenticates the user, stores the token
+     * and navigates into the app.
+     * Maps HTTP status codes to readable error messages on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);
@@ -53,7 +61,6 @@ export default function LoginPageTmpl() {
             router.replace('/');
         } catch (error: any) {
             const status = error.response?.status;
-
             if (status === 401 || status === 400) {
                 setServerError('Incorrect email or password. Please try again.');
             } else if (status === 404) {
@@ -66,7 +73,10 @@ export default function LoginPageTmpl() {
         }
     };
 
-    // One labelled input; clears its own error message as soon as the user types.
+    /**
+     * Single labelled text input.
+     * Clears its own error as soon as the user starts typing.
+     */
     const Field = ({
                        label,
                        field,

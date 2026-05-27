@@ -6,15 +6,6 @@
 import '@/global.css';
 
 import { Platform } from 'react-native';
-import { useFonts } from 'expo-font';
-import {
-  CormorantGaramond_400Regular,
-  CormorantGaramond_700Bold,
-} from '@expo-google-fonts/cormorant-garamond';
-import {
-  Jost_400Regular,
-  Jost_600SemiBold,
-} from '@expo-google-fonts/jost';
 
 export const Colors = {
   light: {
@@ -91,5 +82,4 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
