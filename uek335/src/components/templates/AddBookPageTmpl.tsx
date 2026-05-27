@@ -44,6 +44,7 @@ export default function AddBookPageTmpl() {
     const [serverError, setServerError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
+    // Title is required, pages (if given) must be a valid non-negative number.
     const validate = (): boolean => {
         const next: FormErrors = {};
         if (!form.title.trim()) next.title = "Title is required";
@@ -54,6 +55,7 @@ export default function AddBookPageTmpl() {
         return Object.keys(next).length === 0;
     };
 
+    // Create the book, then reset the form and jump to the search screen.
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);

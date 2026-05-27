@@ -40,6 +40,7 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
     const [errors, setErrors] = useState<FormErrors>({});
     const [submitting, setSubmitting] = useState(false);
 
+    // Prefill the form when editing an existing book, reset it when creating a new one.
     useEffect(() => {
         if (book) {
             setForm({
@@ -54,6 +55,7 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         setErrors({});
     }, [book, visible]);
 
+    // Title is required, pages (if given) must be a valid non-negative number.
     const validate = (): boolean => {
         const next: FormErrors = {};
         if (!form.title.trim()) next.title = "Title is required";
@@ -63,6 +65,7 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         return Object.keys(next).length === 0;
     };
 
+    // Validate, hand the data to the parent (create or update), then close.
     const handleSave = async () => {
         if (!validate()) return;
         setSubmitting(true);
@@ -79,6 +82,7 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         }
     };
 
+    // Builds one labelled input; clears that field's error as soon as the user types.
     const renderField = (
         label: string,
         field: keyof BookForm,

@@ -17,6 +17,7 @@ interface RegisterResponse {
     };
 }
 
+// Creates the account, then stores the returned token + user so the app is logged in.
 export async function registerUser(form: RegisterFormData): Promise<RegisterResponse> {
     const { data } = await api.post(RegisterEndpoint, {
         firstname: form.firstName,
@@ -31,6 +32,7 @@ export async function registerUser(form: RegisterFormData): Promise<RegisterResp
     return data;
 }
 
+// Logs in and stores the token + user for later requests.
 export async function loginUser(email: string, password: string): Promise<RegisterResponse> {
     const { data } = await api.post(LoginEndpoint, {
         email,
@@ -42,11 +44,13 @@ export async function loginUser(email: string, password: string): Promise<Regist
     return data;
 }
 
+// Clears the saved token and returns to the start screen.
 export async function logoutUser(): Promise<void> {
     await deleteToken();
     router.replace('/');
 }
 
+// Deletes the account on the server, then logs out locally.
 export async function deleteAccount(userId: number): Promise<void> {
     await api.delete(`/users/${userId}`);
     await deleteToken();
