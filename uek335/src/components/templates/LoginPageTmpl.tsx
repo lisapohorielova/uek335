@@ -32,6 +32,7 @@ export default function LoginPageTmpl() {
 
     const [errors, setErrors] = useState<LoginFormErrors>({});
 
+    // Basic client-side check before hitting the server.
     const validate = (): boolean => {
         const newErrors: LoginFormErrors = {};
         if (!form.email.includes('@')) newErrors.email = 'Invalid email';
@@ -41,6 +42,7 @@ export default function LoginPageTmpl() {
 
     const [serverError, setServerError] = useState<string | null>(null);
 
+    // Log in and go to the app; map the HTTP status to a readable error message.
     const handleSubmit = async () => {
         if (!validate()) return;
         setServerError(null);
@@ -64,6 +66,7 @@ export default function LoginPageTmpl() {
         }
     };
 
+    // One labelled input; clears its own error message as soon as the user types.
     const Field = ({
                        label,
                        field,

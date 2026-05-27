@@ -30,12 +30,15 @@ export default function BooksPageTmpl() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
+    // Once on mount: find the longest book so the page slider has a sensible upper bound.
     useEffect(() => {
         getMaxPages()
             .then((max) => { setMaxPages(max); setRange([MIN_PAGES, max]); })
             .catch(() => {});
     }, []);
 
+    // Reload books whenever search/filters change, debounced so we don't fire on every keystroke.
+    // `cancelled` ignores a stale response if the inputs change again before it arrives.
     useEffect(() => {
         let cancelled = false;
         const timer = setTimeout(async () => {
@@ -70,7 +73,7 @@ export default function BooksPageTmpl() {
         setBooks(prev => prev.map(b => b.id === updated.id ? updated : b));
     };
 
-    // DELETE
+    // DELETE — ask for confirmation first, then remove from the server and the list.
     const handleDelete = (book: Book) => {
         Alert.alert(
             "Delete Book",

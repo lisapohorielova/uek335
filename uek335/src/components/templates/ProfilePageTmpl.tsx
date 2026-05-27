@@ -15,6 +15,7 @@ import { getStoredUser} from "@/services/SecureStore";
 export default function ProfilePage() {
     const [user, setUser] = useState<User | null >(null);
 
+    // Load the logged-in user: take the id from local storage, fetch fresh data from the server.
     useEffect(() => {
         const fetchUser = async () => {
             const stored = await getStoredUser();

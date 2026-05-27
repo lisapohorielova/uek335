@@ -39,6 +39,7 @@ export default function RegisterPageTmpl() {
     const [errors, setErrors] = useState<RegisterFormErrors>({});
     const [serverError, setServerError] = useState<string | null>(null);
 
+    // Client-side check of every field (name, email, password length, age range).
     const validate = (): boolean => {
         const newErrors: RegisterFormErrors = {};
         if (!form.firstName.trim()) newErrors.firstName = 'Name required';
@@ -53,6 +54,7 @@ export default function RegisterPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Register, store the token and enter the app; map the HTTP status to a readable error.
     const handleSubmit = async () => {
         if (!validate()) return;
 
@@ -76,6 +78,7 @@ export default function RegisterPageTmpl() {
         }
     };
 
+    // One labelled input; clears its own error message as soon as the user types.
     const Field = ({
                        label,
                        field,

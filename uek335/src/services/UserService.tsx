@@ -17,10 +17,6 @@ interface RegisterResponse {
     };
 }
 
-/**
- * Registers a new user and persists the token and user to SecureStore.
- * @param form - Form data collected from the registration screen
- */
 export async function registerUser(form: RegisterFormData): Promise<RegisterResponse> {
     const { data } = await api.post(RegisterEndpoint, {
         firstname: form.firstName,
@@ -31,41 +27,29 @@ export async function registerUser(form: RegisterFormData): Promise<RegisterResp
     });
     await saveToken(data.accessToken);
     await saveUser(data.user);
+
     return data;
 }
 
-/**
- * Authenticates an existing user and persists the token and user to SecureStore.
- * @param email - User's email address
- * @param password - User's password
- */
 export async function loginUser(email: string, password: string): Promise<RegisterResponse> {
     const { data } = await api.post(LoginEndpoint, { email, password });
     await saveToken(data.accessToken);
     await saveUser(data.user);
+
     return data;
 }
 
-/** Clears the stored token and redirects to the login screen. */
 export async function logoutUser(): Promise<void> {
     await deleteToken();
     router.replace('/');
 }
 
-/**
- * Deletes the user account on the backend, clears the token and redirects to login.
- * @param userId - ID of the account to delete
- */
 export async function deleteAccount(userId: number): Promise<void> {
     await api.delete(`/users/${userId}`);
     await deleteToken();
     router.replace('/');
 }
 
-/**
- * Fetches a single user by ID.
- * @param userId - ID of the user to fetch
- */
 export async function getUser(userId: number): Promise<User> {
     const { data } = await api.get(`/users/${userId}`);
     return data;
