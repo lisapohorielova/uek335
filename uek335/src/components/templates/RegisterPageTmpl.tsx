@@ -15,15 +15,29 @@ import {
 import {OutlinedButton} from "@/components/atoms/OutlinedButton";
 import {saveToken} from "@/services/SecureStore";
 
+/** Validation/server error messages shown on the registration form. */
 interface RegisterFormErrors {
+    /** Error for the first-name field. */
     firstName?: string;
+    /** Error for the last-name field. */
     lastName?: string;
+    /** Error for the email field. */
     email?: string;
+    /** Error for the password field. */
     password?: string;
+    /** Error for the age field. */
     age?: string
+    /** Generic message (currently unused, reserved for form-wide errors). */
     message?: string;
 }
 
+/**
+ * Registration screen: collects the account fields, validates them, calls
+ * {@link registerUser} and on success navigates into the app. Server/HTTP
+ * errors are mapped to a readable message.
+ *
+ * @returns The registration form screen.
+ */
 export default function RegisterPageTmpl() {
 
     const router = useRouter();
@@ -39,7 +53,11 @@ export default function RegisterPageTmpl() {
     const [errors, setErrors] = useState<RegisterFormErrors>({});
     const [serverError, setServerError] = useState<string | null>(null);
 
-    // Client-side check of every field (name, email, password length, age range).
+    /**
+     * Client-side check of every field (name, email, password length, age range).
+     *
+     * @returns `true` if all fields are valid.
+     */
     const validate = (): boolean => {
         const newErrors: RegisterFormErrors = {};
         if (!form.firstName.trim()) newErrors.firstName = 'Name required';
@@ -54,7 +72,10 @@ export default function RegisterPageTmpl() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Register, store the token and enter the app; map the HTTP status to a readable error.
+    /**
+     * Registers the account, stores the token and enters the app; maps the HTTP
+     * status to a readable error on failure.
+     */
     const handleSubmit = async () => {
         if (!validate()) return;
 
@@ -78,7 +99,16 @@ export default function RegisterPageTmpl() {
         }
     };
 
-    // One labelled input; clears its own error message as soon as the user types.
+    /**
+     * One labelled input; clears its own error message as soon as the user types.
+     *
+     * @param props - Field configuration.
+     * @param props.label - Field caption.
+     * @param props.field - Which {@link RegisterFormData} key this input edits.
+     * @param props.placeholder - Placeholder text.
+     * @param props.keyboardType - Optional keyboard type (e.g. `"numeric"`).
+     * @returns The labelled input element.
+     */
     const Field = ({
                        label,
                        field,

@@ -8,6 +8,12 @@ import { ThemedView } from './themed-view';
 
 import { Spacing } from '@/constants/theme';
 
+/**
+ * Small badge showing the installed Expo version and logo, with the logo
+ * swapped for light/dark mode. (Expo starter component.)
+ *
+ * @returns The version badge.
+ */
 export function WebBadge() {
   const scheme = useColorScheme();
 

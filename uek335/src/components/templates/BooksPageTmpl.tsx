@@ -15,9 +15,17 @@ import {
 } from "@/services/BooksService";
 import { Book } from "@/types/Book";
 
+/** Lower bound of the page-range filter. */
 const MIN_PAGES = 0;
+/** Delay before a search/filter change triggers a reload, in ms. */
 const DEBOUNCE_MS = 350;
 
+/**
+ * Library screen: lists books with a debounced title search and a page-range
+ * filter, and supports creating, editing and deleting books via {@link BookModal}.
+ *
+ * @returns The library screen.
+ */
 export default function BooksPageTmpl() {
     const [search, setSearch] = useState("");
     const [maxPages, setMaxPages] = useState(1000);
@@ -60,20 +68,32 @@ export default function BooksPageTmpl() {
         return () => { cancelled = true; clearTimeout(timer); };
     }, [search, range, maxPages]);
 
-    // CREATE
+    /**
+     * Creates a book and prepends it to the list.
+     *
+     * @param input - The new book's fields (from {@link BookModal}).
+     */
     const handleCreate = async (input: CreateBookInput | UpdateBookInput) => {
         const created = await createBook(input as CreateBookInput);
         setBooks(prev => [created, ...prev]);
     };
 
-    // UPDATE
+    /**
+     * Updates the currently selected book and replaces it in the list.
+     *
+     * @param input - The changed fields (from {@link BookModal}).
+     */
     const handleUpdate = async (input: CreateBookInput | UpdateBookInput) => {
         if (!selectedBook) return;
         const updated = await updateBook(selectedBook.id, input as UpdateBookInput);
         setBooks(prev => prev.map(b => b.id === updated.id ? updated : b));
     };
 
-    // DELETE — ask for confirmation first, then remove from the server and the list.
+    /**
+     * Asks for confirmation, then deletes the book from the server and the list.
+     *
+     * @param book - The book to delete.
+     */
     const handleDelete = (book: Book) => {
         Alert.alert(
             "Delete Book",
@@ -96,9 +116,18 @@ export default function BooksPageTmpl() {
         );
     };
 
+    /** Opens the modal in "create" mode (no book selected). */
     const openCreate = () => { setSelectedBook(null); setModalVisible(true); };
+    /** Opens the modal in "edit" mode for the given book. */
     const openEdit = (book: Book) => { setSelectedBook(book); setModalVisible(true); };
 
+    /**
+     * Renders one book row (cover, title, meta, edit/delete actions) for the list.
+     *
+     * @param props - FlatList render arg.
+     * @param props.item - The book to render.
+     * @returns The book card element.
+     */
     const renderBook = ({ item }: { item: Book }) => (
         <View style={styles.bookCard}>
             <Image

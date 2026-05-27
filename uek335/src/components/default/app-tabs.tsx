@@ -3,6 +3,12 @@ import React from 'react';
 
 import { Colors } from '@/constants/theme';
 
+/**
+ * Native tab bar using expo-router's `NativeTabs`. (Expo starter component;
+ * the app's own tab bar lives in `app/(tabs)/_layout.tsx`.)
+ *
+ * @returns The native tab navigator.
+ */
 export default function AppTabs() {
   return (
     <NativeTabs

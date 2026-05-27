@@ -16,6 +16,7 @@ import { Colors, Fonts } from "@/constants/theme";
 import { Book } from "@/types/Book";
 import { CreateBookInput, UpdateBookInput } from "@/services/BooksService";
 
+/** Local form state; `pages` is a string because it comes from a text input. */
 interface BookForm {
     title: string;
     description: string;
@@ -23,17 +24,32 @@ interface BookForm {
     cover_url: string;
 }
 
+/** Per-field validation messages (only set for fields that have an error). */
 type FormErrors = Partial<Record<keyof BookForm, string>>;
 
+/** Props for {@link BookModal}. */
 interface Props {
+    /** Whether the modal is shown. */
     visible: boolean;
+    /** Book to edit; pass `null`/omit to create a new one. */
     book?: Book | null;
+    /** Called when the modal should close (cancel, backdrop, or after save). */
     onClose: () => void;
+    /** Persists the entered data; resolves once the save completed. */
     onSave: (data: CreateBookInput | UpdateBookInput) => Promise<void>;
 }
 
+/** Blank form used when creating a new book or resetting the modal. */
 const EMPTY: BookForm = { title: "", description: "", pages: "", cover_url: "" };
 
+/**
+ * Bottom-sheet modal for creating or editing a book. Runs basic validation and
+ * delegates persistence to the `onSave` prop, so the same modal works for both
+ * create and edit.
+ *
+ * @param props - Visibility, the optional book to edit, and the close/save callbacks.
+ * @returns The book create/edit modal.
+ */
 export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
     const isEdit = !!book;
     const [form, setForm] = useState<BookForm>(EMPTY);
@@ -55,7 +71,12 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         setErrors({});
     }, [book, visible]);
 
-    // Title is required, pages (if given) must be a valid non-negative number.
+    /**
+     * Validates the form: title is required, pages (if given) must be a valid
+     * non-negative number. Populates {@link FormErrors} as a side effect.
+     *
+     * @returns `true` if the form is valid.
+     */
     const validate = (): boolean => {
         const next: FormErrors = {};
         if (!form.title.trim()) next.title = "Title is required";
@@ -65,7 +86,10 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         return Object.keys(next).length === 0;
     };
 
-    // Validate, hand the data to the parent (create or update), then close.
+    /**
+     * Validates, hands the trimmed data to the parent (create or update) via
+     * `onSave`, then closes the modal. Shows a spinner while saving.
+     */
     const handleSave = async () => {
         if (!validate()) return;
         setSubmitting(true);
@@ -82,7 +106,14 @@ export function BookModal({ visible, book, onClose, onSave }: Readonly<Props>) {
         }
     };
 
-    // Builds one labelled input; clears that field's error as soon as the user types.
+    /**
+     * Builds one labelled input; clears that field's error as soon as the user types.
+     *
+     * @param label - Field caption.
+     * @param field - Which {@link BookForm} key this input edits.
+     * @param options - Optional `multiline` flag and `keyboardType`.
+     * @returns The labelled input element.
+     */
     const renderField = (
         label: string,
         field: keyof BookForm,

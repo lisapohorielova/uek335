@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "docs": "typedoc"
   },
   "dependencies": {
     "@expo-google-fonts/cormorant-garamond": "^0.4.1",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "typedoc": "^0.28.19",
     "typescript": "~5.9.2"
   },
   "private": true
