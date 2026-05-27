@@ -7,6 +7,10 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+/**
+ * App colour palette. `light`/`dark` drive the themed components, while `main`
+ * holds the BookCrux brand colours used across the custom screens.
+ */
 export const Colors = {
   light: {
     text: '#000000',
@@ -33,8 +37,13 @@ export const Colors = {
   },
 } as const;
 
+/** Names of the colour roles shared by both the light and dark theme. */
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
+/**
+ * Platform-specific font family names. The custom Cormorant/Jost families are
+ * the same everywhere; the system fonts differ per platform.
+ */
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
@@ -72,6 +81,7 @@ export const Fonts = Platform.select({
   },
 });
 
+/** Spacing scale (in px) used for padding, margins and gaps. */
 export const Spacing = {
   half: 2,
   one: 4,
@@ -82,4 +92,7 @@ export const Spacing = {
   six: 64,
 } as const;
 
+/** Extra bottom inset reserved for the tab bar, per platform. */
+export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+/** Maximum content width (px) used to keep wide/web layouts readable. */
 export const MaxContentWidth = 800;

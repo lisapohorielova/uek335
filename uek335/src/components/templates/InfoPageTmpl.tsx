@@ -6,6 +6,12 @@ import { Text } from "react-native-paper";
 import { ShadowButton } from "@/components/atoms/ShadowButton";
 import {router} from "expo-router";
 
+/**
+ * Landing/info screen: shows the BookCrux branding and a "Get Started" button
+ * that navigates to the search/library screen.
+ *
+ * @returns The info screen.
+ */
 export default function InfoPageTmpl() {
   return (
     <View style={styles.container}>
@@ -26,6 +32,8 @@ export default function InfoPageTmpl() {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: { alignItems: "center", backgroundColor: Colors.main.background, height: "100%", padding: 20  },

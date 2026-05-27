@@ -1,32 +1,53 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors, Fonts } from "@/constants/theme";
+import {LinearGradient} from "expo-linear-gradient";
+import {Colors, Fonts} from "@/constants/theme";
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { RegisterFormData } from "@/types/RegisterFormData";
-import { registerUser } from "@/services/UserService";
+import {RegisterFormData} from "@/types/RegisterFormData";
+import { registerUser} from "@/services/UserService";
 import {
-    View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform,
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
-import { OutlinedButton } from "@/components/atoms/OutlinedButton";
-import { saveToken } from "@/services/SecureStore";
+import {OutlinedButton} from "@/components/atoms/OutlinedButton";
+import {saveToken} from "@/services/SecureStore";
 
 /** Field-level validation errors for the registration form. */
 interface RegisterFormErrors {
+    /** Error for the first-name field. */
     firstName?: string;
+    /** Error for the last-name field. */
     lastName?: string;
+    /** Error for the email field. */
     email?: string;
+    /** Error for the password field. */
     password?: string;
-    age?: string;
+    /** Error for the age field. */
+    age?: string
+    /** Generic message (currently unused, reserved for form-wide errors). */
     message?: string;
 }
 
-/** Registration screen — collects user data, validates it and calls the backend. */
+/**
+ * Registration screen: collects the account fields, validates them, calls
+ * {@link registerUser} and on success navigates into the app. Server/HTTP
+ * errors are mapped to a readable message.
+ *
+ * @returns The registration form screen.
+ */
 export default function RegisterPageTmpl() {
 
     const router = useRouter();
 
     const [form, setForm] = useState<RegisterFormData>({
-        firstName: '', lastName: '', email: '', password: '', age: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        age: '',
     });
 
     const [errors, setErrors] = useState<RegisterFormErrors>({});
@@ -35,8 +56,9 @@ export default function RegisterPageTmpl() {
     const [serverError, setServerError] = useState<string | null>(null);
 
     /**
-     * Client-side validation of every field.
-     * @returns true if all fields are valid, false otherwise
+     * Client-side check of every field (name, email, password length, age range).
+     *
+     * @returns `true` if all fields are valid.
      */
     const validate = (): boolean => {
         const newErrors: RegisterFormErrors = {};
@@ -47,13 +69,14 @@ export default function RegisterPageTmpl() {
         const age = Number.parseInt(form.age);
         if (!form.age || Number.isNaN(age) || age < 1 || age > 120)
             newErrors.age = 'Valid age required';
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     /**
-     * Submits the form — registers the user, stores the token and navigates into the app.
-     * Maps HTTP status codes to readable error messages on failure.
+     * Registers the account, stores the token and enters the app; maps the HTTP
+     * status to a readable error on failure.
      */
     const handleSubmit = async () => {
         if (!validate()) return;
@@ -61,6 +84,7 @@ export default function RegisterPageTmpl() {
         try {
             const data = await registerUser(form);
             await saveToken(data.accessToken);
+            console.log('Token gespeichert');
             router.push('/');
         } catch (error: any) {
             const status = error.response?.status;
@@ -86,7 +110,10 @@ export default function RegisterPageTmpl() {
      * @param keyboardType - Optional keyboard type (default: 'default')
      */
     const Field = ({
-                       label, field, placeholder, keyboardType = 'default',
+                       label,
+                       field,
+                       placeholder,
+                       keyboardType = 'default',
                    }: {
         label: string;
         field: keyof RegisterFormData;
@@ -161,48 +188,140 @@ export default function RegisterPageTmpl() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, alignItems: 'center', backgroundColor: Colors.main.background,
-        padding: 20, flexDirection: 'column', gap: 10,
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: Colors.main.background,
+        padding: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10
     },
     textCormorant: {
-        fontSize: 28, color: Colors.main.background,
-        fontFamily: Fonts.cormorantBold, marginLeft: 30, top: -20,
+        fontSize: 28,
+        color: Colors.main.background,
+        fontFamily: Fonts.cormorantBold,
+        marginLeft: 30,
+        top: -20
     },
-    header: {
-        height: 100, width: '100%', borderRadius: 22, marginTop: 30,
-        flexDirection: 'column', shadowColor: Colors.main.main,
-        shadowOffset: { width: 2, height: 5 }, shadowOpacity: 0.35,
-        shadowRadius: 3.84, elevation: 5, justifyContent: 'center',
+    header:{
+        height: 100,
+        width: '100%',
+        borderRadius: 22,
+        marginTop: 30,
+        flexDirection: 'column',
+        shadowColor: Colors.main.main,
+        shadowOffset: { width: 2, height: 5 },
+        shadowOpacity: 0.35,
+        shadowRadius: 3.84,
+        elevation: 5,
+        justifyContent: 'center',
     },
-    safe: { flex: 1, backgroundColor: '#0D0C1D' },
-    title: { fontSize: 28, fontWeight: '700', color: '#F1DAC4', letterSpacing: -0.5 },
-    subtitle: { fontSize: 14, color: '#A69CAC', marginTop: 6 },
+    safe: {
+        flex: 1,
+        backgroundColor: '#0D0C1D',
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#F1DAC4',
+        letterSpacing: -0.5,
+    },
+    subtitle: {
+        fontSize: 14,
+        color: '#A69CAC',
+        marginTop: 6,
+    },
     form: {
-        width: '100%', backgroundColor: Colors.main.dark, padding: 24,
-        borderRadius: 22, shadowColor: Colors.main.main,
-        shadowOffset: { width: 2, height: 5 }, shadowOpacity: 0.35,
-        shadowRadius: 3.84, elevation: 5,
+        width: '100%',
+        backgroundColor: Colors.main.dark,
+        padding: 24,
+        borderRadius: 22,
+        shadowColor: Colors.main.main,
+        shadowOffset: { width: 2, height: 5 },
+        shadowOpacity: 0.35,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
-    row: { flexDirection: 'row' },
-    fieldContainer: { marginBottom: 16 },
-    label: { fontSize: 13, fontWeight: '600', color: '#A69CAC', marginBottom: 8, letterSpacing: 0.5 },
+    row: {
+        flexDirection: 'row',
+    },
+    fieldContainer: {
+        marginBottom: 16,
+    },
+    label: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#A69CAC',
+        marginBottom: 8,
+        letterSpacing: 0.5,
+    },
     inputWrapper: {
-        flexDirection: 'row', alignItems: 'center',
-        backgroundColor: '#161B33', borderRadius: 12, borderWidth: 1, borderColor: '#474973',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#161B33',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#474973',
     },
-    inputError: { borderColor: '#e05a5a' },
-    input: { flex: 1, paddingHorizontal: 16, paddingVertical: 14, fontSize: 15, color: '#F1DAC4' },
-    eyeBtn: { paddingHorizontal: 14 },
-    eyeText: { fontSize: 16 },
-    errorText: { fontSize: 11, color: '#e05a5a', marginTop: 4, marginLeft: 4 },
+    inputError: {
+        borderColor: '#e05a5a',
+    },
+    input: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        fontSize: 15,
+        color: '#F1DAC4',
+    },
+    eyeBtn: {
+        paddingHorizontal: 14,
+    },
+    eyeText: {
+        fontSize: 16,
+    },
+    errorText: {
+        fontSize: 11,
+        color: '#e05a5a',
+        marginTop: 4,
+        marginLeft: 4,
+    },
     errorBox: {
-        backgroundColor: '#2a1a1a', borderRadius: 10,
-        borderLeftWidth: 3, borderLeftColor: '#e05a5a', padding: 12, marginBottom: 16,
+        backgroundColor: '#2a1a1a',
+        borderRadius: 10,
+        borderLeftWidth: 3,
+        borderLeftColor: '#e05a5a',
+        padding: 12,
+        marginBottom: 16,
     },
-    errorBoxText: { color: '#e05a5a', fontSize: 13, fontFamily: Fonts?.jost },
-    btnGradient: { borderRadius: 14, marginTop: 24 },
-    btn: { paddingVertical: 16, alignItems: 'center' },
-    btnText: { color: '#F1DAC4', fontSize: 16, fontWeight: '600', letterSpacing: 0.3 },
-    loginHint: { textAlign: 'center', marginTop: 20, color: '#A69CAC', fontSize: 13 },
-    loginLink: { color: '#F1DAC4', fontWeight: '600', textDecorationLine: 'underline' },
+    errorBoxText: {
+        color: '#e05a5a',
+        fontSize: 13,
+        fontFamily: Fonts?.jost,
+    },
+    btnGradient: {
+        borderRadius: 14,
+        marginTop: 24,
+    },
+    btn: {
+        paddingVertical: 16,
+        alignItems: 'center',
+    },
+    btnText: {
+        color: '#F1DAC4',
+        fontSize: 16,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+    loginHint: {
+        textAlign: 'center',
+        marginTop: 20,
+        color: '#A69CAC',
+        fontSize: 13,
+    },
+    loginLink: {
+        color: '#F1DAC4',
+        fontWeight: '600',
+        textDecorationLine: 'underline',
+    },
+
 });

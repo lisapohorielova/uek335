@@ -16,6 +16,14 @@ import { PaperProvider } from 'react-native-paper';
 
 import { AnimatedSplashOverlay } from '@/components/default/animated-icon';
 
+/**
+ * Root layout for the whole app. Loads the custom fonts, sets up the
+ * navigation theme, Paper and safe-area providers, shows the animated splash
+ * overlay, and declares the top-level stack (`index`, `(auth)`, `(tabs)`).
+ *
+ * @returns The provider tree wrapping the navigation stack, or `null` while
+ *   the fonts are still loading.
+ */
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [fontsLoaded] = useFonts({

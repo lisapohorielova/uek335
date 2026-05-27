@@ -5,10 +5,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors, Fonts } from "@/constants/theme";
 
+/** Valid Ionicons icon name. */
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
+/** Props for {@link TabButton} (extends the slot props from `<TabTrigger>`). */
 type TabButtonProps = TabTriggerSlotProps & {
+    /** Ionicon shown above the label. */
     icon: IoniconName;
+    /** Text label under the icon. */
     label: string;
     /** The highlighted action tab (ADD) keeps its accent colour regardless of focus. */
     highlight?: boolean;
@@ -16,7 +20,10 @@ type TabButtonProps = TabTriggerSlotProps & {
 
 /**
  * A single pill button in the bottom bar. Receives focus/press props from the
- * surrounding <TabTrigger asChild> (see app/(tabs)/_layout.tsx).
+ * surrounding `<TabTrigger asChild>` (see `app/(tabs)/_layout.tsx`).
+ *
+ * @param props - Icon, label and optional `highlight`; `isFocused` is injected by the tab trigger.
+ * @returns A pressable tab button.
  */
 export const TabButton = ({ icon, label, highlight, isFocused, ...props }: TabButtonProps) => {
     const backgroundColor = highlight
@@ -43,8 +50,11 @@ export const TabButton = ({ icon, label, highlight, isFocused, ...props }: TabBu
 
 /**
  * Visual container of the custom bottom navigation bar. Used as the
- * `<TabList asChild>` target so the <TabTrigger> children (passed in from
- * app/(tabs)/_layout.tsx) stay discoverable by expo-router as screens.
+ * `<TabList asChild>` target so the `<TabTrigger>` children (passed in from
+ * `app/(tabs)/_layout.tsx`) stay discoverable by expo-router as screens.
+ *
+ * @param props - Standard `TabList` props; `children` are the tab triggers.
+ * @returns The floating bottom bar wrapping the tab buttons.
  */
 export const MenuBar = ({ children, style, ...props }: TabListProps) => {
     const insets = useSafeAreaInsets();

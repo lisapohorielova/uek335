@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors, Fonts } from "@/constants/theme";
 import { createBook } from "@/services/BooksService";
 
+/** Local form state; `pages` is a string because it comes from a text input. */
 interface NewBookForm {
     title: string;
     author: string;
@@ -25,8 +26,10 @@ interface NewBookForm {
     cover_url: string;
 }
 
+/** Per-field validation messages (only set for fields that have an error). */
 type FormErrors = Partial<Record<keyof NewBookForm, string>>;
 
+/** Blank form used as the initial state and after a successful submit. */
 const EMPTY_FORM: NewBookForm = {
     title: "",
     author: "",
@@ -35,7 +38,12 @@ const EMPTY_FORM: NewBookForm = {
     cover_url: "",
 };
 
-/** Screen for adding a new book to the catalogue. */
+/**
+ * Full-screen "Create a Book" form (the ADD tab). Validates input, creates the
+ * book via {@link createBook} and navigates to the search screen on success.
+ *
+ * @returns The add-book form screen.
+ */
 export default function AddBookPageTmpl() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
@@ -50,8 +58,9 @@ export default function AddBookPageTmpl() {
     const [submitting, setSubmitting] = useState(false);
 
     /**
-     * Client-side validation — title is required, pages must be a valid non-negative number.
-     * @returns true if the form is valid, false otherwise
+     * Title is required, pages (if given) must be a valid non-negative number.
+     *
+     * @returns `true` if the form is valid.
      */
     const validate = (): boolean => {
         const next: FormErrors = {};
@@ -88,7 +97,7 @@ export default function AddBookPageTmpl() {
         }
     };
 
-    /** Resets the form and navigates back to the home screen without saving. */
+    /** Clears the form and returns to the home screen. */
     const handleCancel = () => {
         setForm(EMPTY_FORM);
         setErrors({});
@@ -97,14 +106,13 @@ export default function AddBookPageTmpl() {
     };
 
     /**
-     * Renders a single labelled text input.
-     * Called as a plain function instead of a JSX component so inputs
-     * retain focus between keystrokes.
-     * Clears its own error as soon as the user starts typing.
+     * Builds one labelled input. Called as a plain function (not `<Field />`)
+     * so the inputs keep focus between keystrokes.
      *
-     * @param label - Uppercase label shown above the input
-     * @param field - Key of the form field this input controls
-     * @param options - Optional multiline flag and keyboard type
+     * @param label - Field caption.
+     * @param field - Which {@link NewBookForm} key this input edits.
+     * @param options - Optional `multiline` flag and `keyboardType`.
+     * @returns The labelled input element.
      */
     const renderField = (
         label: string,

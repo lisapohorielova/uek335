@@ -15,12 +15,23 @@ import {
 import {saveToken} from "@/services/SecureStore";
 import {ShadowButton} from "@/components/atoms/ShadowButton";
 
+/** Validation/server error messages shown on the login form. */
 interface LoginFormErrors {
+    /** Error for the email field. */
     email?: string;
+    /** Error for the password field. */
     password?: string;
+    /** Generic message (currently unused, reserved for form-wide errors). */
     message?: string;
 }
-/** Login screen — authenticates the user and navigates into the app. */
+
+/**
+ * Login screen: collects email/password, validates them, calls
+ * {@link loginUser} and on success navigates into the app. Server/HTTP errors
+ * are mapped to a readable message.
+ *
+ * @returns The login form screen.
+ */
 export default function LoginPageTmpl() {
 
     const router = useRouter();
@@ -33,8 +44,9 @@ export default function LoginPageTmpl() {
     const [errors, setErrors] = useState<LoginFormErrors>({});
 
     /**
-     * Basic client-side validation before hitting the server.
-     * @returns true if the form is valid, false otherwise
+     * Basic client-side check before hitting the server.
+     *
+     * @returns `true` if the email looks valid.
      */
     const validate = (): boolean => {
         const newErrors: LoginFormErrors = {};
@@ -47,9 +59,8 @@ export default function LoginPageTmpl() {
     const [serverError, setServerError] = useState<string | null>(null);
 
     /**
-     * Submits the login form — authenticates the user, stores the token
-     * and navigates into the app.
-     * Maps HTTP status codes to readable error messages on failure.
+     * Logs in and navigates to the app; maps the HTTP status to a readable
+     * error message on failure.
      */
     const handleSubmit = async () => {
         if (!validate()) return;
@@ -72,10 +83,15 @@ export default function LoginPageTmpl() {
             }
         }
     };
-
     /**
-     * Single labelled text input.
-     * Clears its own error as soon as the user starts typing.
+     * One labelled input; clears its own error message as soon as the user types.
+     *
+     * @param props - Field configuration.
+     * @param props.label - Field caption.
+     * @param props.field - Which {@link LoginFormData} key this input edits.
+     * @param props.placeholder - Placeholder text.
+     * @param props.keyboardType - Optional keyboard type (e.g. `"email-address"`).
+     * @returns The labelled input element.
      */
     const Field = ({
                        label,
