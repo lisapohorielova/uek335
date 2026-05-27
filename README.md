@@ -28,7 +28,7 @@ git clone git@github.com:lisapohorielova/uek335.git
 ### 2. In das Projektverzeichnis wechseln
 
 ```bash
-cd BookDetailsChecker
+cd uek335
 ```
 
 ### 3. Abhängigkeiten installieren
