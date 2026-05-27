@@ -3,8 +3,7 @@ import {
     View,
     Text,
     StyleSheet,
-    Image,
-    ScrollView,
+    Image, Alert,
 } from 'react-native';
 import { Colors, Fonts } from '@/constants/theme';
 import {ShadowButton} from "@/components/atoms/ShadowButton";
@@ -25,6 +24,21 @@ export default function ProfilePage() {
         };
         fetchUser().then(() => {});
     }, []);
+
+    const handleDelete = () => {
+        Alert.alert(
+            'Delete Account',
+            'Are you sure? This action cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => user && deleteAccount(user.id),
+                },
+            ]
+        );
+    };
 
     const Field = ({ label, value }: { label: string; value: string }) => (
         <View style={styles.fieldContainer}>
@@ -58,7 +72,7 @@ export default function ProfilePage() {
 
             <View style={styles.buttonContainer}>
                 <ShadowButton text={"LOGOUT"} onPress={logoutUser}/>
-                <ShadowButton text={"DELETE"} onPress={() => user && deleteAccount(user.id)}/>
+                <ShadowButton text={"DELETE"} onPress={handleDelete} />
             </View>
         </View>
     );

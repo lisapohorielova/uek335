@@ -21,7 +21,3 @@ export const getStoredUser = async (): Promise<User | null> => {
     const data = await SecureStore.getItemAsync('user');
     return data ? JSON.parse(data) : null;
 };
-
-export const deleteUser = async (): Promise<void> => {
-    await SecureStore.deleteItemAsync('user');
-};
